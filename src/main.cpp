@@ -1,31 +1,38 @@
 #include <iostream>
 #include <memory>
 #include <cmath>
+#include <string>
+#include <typeinfo>
 
+template<typename T>
 class Node
 {
 private:
-    int val;
+    size_t size;
+    std::unique_ptr<T> val;
 public:
     std::shared_ptr<Node> left;
     std::shared_ptr<Node> right;
 
     Node()
     {
-        this->val = 0;
+        size = 1;
+        this->val = new std::unique_ptr<T> [size];
         this->left = nullptr;
         this->right = nullptr;
         //std::cout << "\tCreating a node...\n";
     }
-    Node(int _val)
+    Node(T _val)
     {
-        this->val = _val;
+        size = 1;
+        this->val = new std::unique_ptr<T> [size];
+        this->val[0] = _val;
         this->left = nullptr;
         this->right = nullptr;
         //std::cout << "\tCreating a node...\n";
     }
     
-    int getVal()
+    T getVal()
     {
         return this->val;
     }
@@ -33,29 +40,45 @@ public:
     {
         this->val = _val;
     }
+
+    bool operator > (const Node& node) {
+        return this->val > node->val;
+    }
+    bool operator < (const Node& node) {
+        return this->val < node->val;
+    }
+    bool operator == (const Node& node) {
+        return this->val == node->val;
+    }
+    Node operator + (const Node& node) {
+        Node temp;
+        temp->val = this->val + node->val;
+        return temp;
+    }
 };
 
+template<typename T>
 class Tree
 {
 private:
     int height;
     int numNodes;
 public:
-    std::shared_ptr<Node> root = std::shared_ptr<Node>(new Node(0));
+    std::shared_ptr<Node<T>> root = std::shared_ptr<Node<T>>(new Node<T>(0));
 
     Tree() : height(1), numNodes(1)
     {
         //root = std::shared_ptr<Node>(new Node(0));
-        int _val;
+        T _val;
         std::cout << "What value should the root have?\n ~> ";
         std::cin >> _val;
         root->setVal(_val);
     }
-    std::shared_ptr<Node> findNode(int _val, std::shared_ptr<Node> currNode = nullptr)
+    std::shared_ptr<Node<T>> find(T _val, std::shared_ptr<Node<T>> currNode = nullptr)
     {
         if (currNode == nullptr)
             currNode = root;
-        std::shared_ptr<Node> result = nullptr;
+        std::shared_ptr<Node<T>> result = nullptr;
 
         if (currNode->getVal() == _val)
         {
@@ -77,7 +100,7 @@ public:
         else return nullptr;
     }
 
-    bool insertNode(int _val, std::shared_ptr<Node> currNode = nullptr, int currHeight = 2)
+    bool insertNode(int _val, std::shared_ptr<Node<T>> currNode = nullptr, int currHeight = 2)
     {
         auto check = [](int x) { return (x+1 != 0 && (x+1 & (x)) == 0); }; // bit manipulation way to check if the number is a (power of 2)-1
 
@@ -90,7 +113,7 @@ public:
 
         if (maxHeight == 1)
         {
-            currNode->left = std::shared_ptr<Node>(new Node(_val));
+            currNode->left = std::shared_ptr<Node<T>>(new Node<T>(_val));
             this->numNodes++;
             return true;
         }
@@ -101,13 +124,13 @@ public:
         
         if (currNode->left == nullptr && currHeight <= maxHeight)
         {
-            currNode->left = std::shared_ptr<Node>(new Node(_val));
+            currNode->left = std::shared_ptr<Node<T>>(new Node<T>(_val));
             this->numNodes++;
             return true;
         }
         else if (currNode->right == nullptr && currHeight <= maxHeight)
         {
-            currNode->right = std::shared_ptr<Node>(new Node(_val));
+            currNode->right = std::shared_ptr<Node<T>>(new Node<T>(_val));
             this->numNodes++;
             return true;
         }
@@ -124,8 +147,8 @@ public:
     }
     void insert(int _val)
     {
-        std::shared_ptr<Node> temp = nullptr;
-        temp = findNode(_val);
+        std::shared_ptr<Node<T>> temp = nullptr;
+        temp = find(_val);
         if (temp != nullptr)
         {
             char c;
@@ -144,7 +167,7 @@ public:
             res += "  ";
         return res;
     }
-    void printTree_helper(std::shared_ptr<Node> node, int level = 0)
+    void printTree_helper(std::shared_ptr<Node<T>> node, int level = 0)
     {
         if (node == nullptr)
         {
@@ -168,6 +191,7 @@ public:
 
 int main()
 {
+    /*
     Tree T;
 
     std::shared_ptr<Node> someNode = nullptr;
@@ -186,5 +210,18 @@ int main()
 
     someNode->setVal(20);
     T.printTree();
-    
+    */
+
+    int var1;
+    std::string var2 = "abc";
+    double var3;
+    float var4;
+    char var5;
+    std::cout << typeid(var1).name() << "\n";
+    std::cout << typeid(var2).name() << "\n";
+    std::cout << typeid(var3).name() << "\n";
+    std::cout << typeid(var4).name() << "\n";
+    std::cout << typeid(var5).name() << "\n";
+
+    std::cout << (var2 > "zzz") << "\n";
 }
