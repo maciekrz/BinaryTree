@@ -29,6 +29,14 @@ public:
         this->left = nullptr;
         this->right = nullptr;
     }
+    ~Node()
+    {
+        if (val != NULL && val != nullptr)
+        {
+            std::cout << "deleting " << *val << " -- " << val << "\n";
+            delete val;
+        }
+    }
     
     size_t getSize()
     {
@@ -36,7 +44,7 @@ public:
     }
     void incSize()
     {
-        size++;
+        this->size++;
         return;
     }
     T getVal()
@@ -83,11 +91,11 @@ private:
     {
         if (node == nullptr)
         {
-            std::cout << "--\n";
+            std::cout << "-*-\n";
             return;
         }
         if (level == 0) std::cout << "root: ";
-        std::cout << node->getVal() << "\n";
+        std::cout << node->getVal() << " (" << node->getSize() << ")" << "\n";
         std::cout << spacing(level) << "  left: ";
         printTree_helper(node->left, level+1);
         std::cout << spacing(level) << "  right: ";
@@ -111,9 +119,9 @@ public:
     std::shared_ptr<Node<T>> find(T _val)
     {
         std::shared_ptr<Node<T>> currNode = root;
-        while ( currNode != nullptr && _val != currNode.getVal() )
+        while ( currNode != nullptr && _val != currNode->getVal() )
         {
-            if (_val < currNode.getVal())
+            if (_val < currNode->getVal())
             {
                 currNode = currNode->left;
             }
@@ -122,7 +130,7 @@ public:
                 currNode = currNode->right;
             }
         }
-        if (currNode.getVal() == _val)
+        if (currNode->getVal() == _val)
             return currNode;
         else
             return nullptr;
@@ -141,7 +149,7 @@ public:
         T currVal;
         while ( currNode != nullptr )
         {
-            currVal = currNode.getVal();
+            currVal = currNode->getVal();
             temp = currNode;
             if (_val < currVal)
             {
@@ -151,8 +159,13 @@ public:
             {
                 currNode = currNode->right;
             }
+            else
+            {
+                currNode = currNode;
+                break;
+            }
         }
-        currVal = currNode.getVal();
+        currVal = temp->getVal();
         if (_val < currVal)
         {
             temp->left = std::shared_ptr<Node<T>>(new Node<T>(_val));
@@ -163,8 +176,8 @@ public:
         }
         else
         {
-            temp.incSize();
-            temp.setVal(_val, temp.getSize-1);
+            temp->incSize();
+            temp->setVal(_val, (temp->getSize())-1);
         }
         numNodes++;
         return;
@@ -172,17 +185,37 @@ public:
 
     void printTree()
     {
+        std::cout << "\n";
         printTree_helper(this->root);
+    }
+
+    Tree& operator=(Tree _tree)
+    {
+        this->root = _tree.root;
+        return *this;
     }
     
 };
 
-
 int main()
 {
+    
+    Tree<int> tree;
 
-    Tree<std::string> tree("abc");
+    tree.insert(5);
+    tree.insert(40);
+    tree.insert(6);
+    tree.insert(6);
+    tree.insert(10);
+    tree.insert(10);
+    tree.insert(10);
+    tree.insert(70);
+    tree.insert(15);
+    tree.insert(15);
+    tree.insert(20);
+    tree.insert(20);
+    tree.insert(10);
+
     tree.printTree();
-    tree.insert("cdefg");
 
 }
