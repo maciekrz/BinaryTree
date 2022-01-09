@@ -194,6 +194,30 @@ public:
         this->root = _tree.root;
         return *this;
     }
+
+    std::shared_ptr<Node<T>> max()
+    {
+        std::shared_ptr<Node<T>> currNode = root;
+        while ( currNode->right != nullptr)
+        {
+            currNode = currNode->right;
+        }
+        return currNode;
+    }
+    std::shared_ptr<Node<T>> min()
+    {
+        std::shared_ptr<Node<T>> currNode = root;
+        while ( currNode->left != nullptr)
+        {
+            currNode = currNode->left;
+        }
+        return currNode;
+    }
+    
+    void sort()
+    {
+        Tree<T> newTree;
+    }
     
 };
 
@@ -202,20 +226,26 @@ int main()
     
     Tree<int> tree;
 
+    tree.insert(10);
     tree.insert(5);
     tree.insert(40);
     tree.insert(6);
     tree.insert(6);
     tree.insert(10);
     tree.insert(10);
-    tree.insert(10);
     tree.insert(70);
     tree.insert(15);
     tree.insert(15);
     tree.insert(20);
+    tree.insert(1);
     tree.insert(20);
     tree.insert(10);
 
     tree.printTree();
+
+    std::shared_ptr<Node<int>> temp = tree.max();
+    std::cout << temp->getVal() << "\n";
+    temp = tree.min();
+    std::cout << temp->getVal() << "\n";
 
 }
