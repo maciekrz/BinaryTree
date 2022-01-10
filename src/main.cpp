@@ -312,5 +312,11 @@ int main()
 
     tree.printTree();
 
-    //tree.printIncreasing();
+    /*
+     *  TO DO:
+     *  * SORTING
+     *  * INPUT/OUTPUT WITH FILES
+     *  * MAYBE SOMETHING MORE
+     */
+
 }
