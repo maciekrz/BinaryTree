@@ -33,7 +33,6 @@ public:
     {
         if (val != NULL && val != nullptr)
         {
-            std::cout << "deleting " << *val << " -- " << val << "\n";
             delete val;
         }
     }
@@ -101,6 +100,57 @@ private:
         std::cout << spacing(level) << "  right: ";
         printTree_helper(node->right, level+1);
     }
+    std::shared_ptr <Node<T>> pop_helper(T _val, std::shared_ptr<Node<T>> root = nullptr)
+    {
+        if (root == nullptr)
+            root = this->root;
+
+        std::shared_ptr<Node<T>> currNode = root;
+
+    if (root == nullptr)
+        return root;
+    if (root->getVal() > _val) 
+    {
+        root->left = this->pop_helper(_val, root->left);
+        return root;
+    }
+    if (root->getVal() < _val) 
+    {
+        root->right = this->pop_helper(_val, root->right);
+        return root;
+    }
+
+        std::shared_ptr<Node<T>> popped = nullptr;
+        if (currNode != nullptr)
+        {
+            if (currNode->left == nullptr && currNode->right == nullptr)
+            {
+                popped = currNode;
+                currNode = nullptr;
+                return nullptr;
+            }
+            else if (currNode->left == nullptr)
+            {
+                popped = currNode;
+                currNode = currNode->right;
+                return currNode;
+            }
+            else if (currNode->right == nullptr)
+            {
+                popped = currNode;
+                currNode = currNode->left;
+                return currNode;
+            }
+            else
+            {
+                currNode = this->min(root->right);
+                root->setVal(currNode->getVal());
+                root->right = pop_helper(currNode->getVal(), root->right);
+                return root;
+            }
+        }
+        return root;
+    }
 
 public:
     std::shared_ptr<Node<T>> root = nullptr;
@@ -121,19 +171,29 @@ public:
         std::shared_ptr<Node<T>> currNode = root;
         while ( currNode != nullptr && _val != currNode->getVal() )
         {
+            if (currNode == nullptr)
+                return nullptr;
             if (_val < currNode->getVal())
             {
                 currNode = currNode->left;
             }
-            else
+            else if (_val > currNode->getVal())
             {
                 currNode = currNode->right;
             }
         }
-        if (currNode->getVal() == _val)
-            return currNode;
-        else
+        if (currNode == nullptr)
+        {
             return nullptr;
+        }
+        else if (currNode->getVal() == _val)
+        {
+            return currNode;
+        }
+        else
+        {
+            return nullptr;
+        }
     }
 
     void insert(T _val)
@@ -195,8 +255,11 @@ public:
         return *this;
     }
 
-    std::shared_ptr<Node<T>> max()
+    std::shared_ptr<Node<T>> max(std::shared_ptr<Node<T>> root = nullptr)
     {
+        if (root == nullptr)
+            root = this->root;
+
         std::shared_ptr<Node<T>> currNode = root;
         while ( currNode->right != nullptr)
         {
@@ -204,8 +267,11 @@ public:
         }
         return currNode;
     }
-    std::shared_ptr<Node<T>> min()
+    std::shared_ptr<Node<T>> min(std::shared_ptr<Node<T>> root = nullptr)
     {
+        if (root == nullptr)
+            root = this->root;
+
         std::shared_ptr<Node<T>> currNode = root;
         while ( currNode->left != nullptr)
         {
@@ -214,9 +280,12 @@ public:
         return currNode;
     }
     
-    void sort()
+    void pop(T _val)
     {
-        Tree<T> newTree;
+        if (this->find(_val) != nullptr)
+            this->root = this->pop_helper(_val);
+        else
+            return;
     }
     
 };
@@ -229,23 +298,19 @@ int main()
     tree.insert(10);
     tree.insert(5);
     tree.insert(40);
-    tree.insert(6);
-    tree.insert(6);
-    tree.insert(10);
-    tree.insert(10);
-    tree.insert(70);
+    tree.insert(2);
+    tree.insert(4);
     tree.insert(15);
-    tree.insert(15);
+    tree.insert(50);
+    tree.insert(6);
+    tree.insert(7);
     tree.insert(20);
-    tree.insert(1);
-    tree.insert(20);
-    tree.insert(10);
 
     tree.printTree();
 
-    std::shared_ptr<Node<int>> temp = tree.max();
-    std::cout << temp->getVal() << "\n";
-    temp = tree.min();
-    std::cout << temp->getVal() << "\n";
+    tree.pop(5);
 
+    tree.printTree();
+
+    //tree.printIncreasing();
 }
