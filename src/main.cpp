@@ -1,15 +1,15 @@
 #include <iostream>
 #include <memory>
-#include <cmath>
 #include <string>
-#include <typeinfo>
+//#include <typeinfo>
 
 template<typename T>
 class Node
 {
 private:
     size_t size;
-    T *val;
+    //T *val;
+    std::shared_ptr<T[]> val;
 public:
     std::shared_ptr<Node> left;
     std::shared_ptr<Node> right;
@@ -17,29 +17,25 @@ public:
     Node()
     {
         size = 1;
-        this->val = new T [size];
+        //this->val = new T [size];
+        this->val = std::make_shared<T[]>();
         this->left = nullptr;
         this->right = nullptr;
     }
     Node(T _val)
     {
         size = 1;
-        this->val = new T [size];
-        this->val[0] = _val;
+        //this->val = new T [size];
+        //this->val[0] = _val;
+        this->val = std::make_shared<T[]>(_val);
         this->left = nullptr;
         this->right = nullptr;
     }
-    ~Node()
-    {
-        if (val != NULL && val != nullptr)
-        {
-            delete val;
-        }
-    }
+    ~Node() = default;
     
     size_t getSize()
     {
-        return size;
+        return this->size;
     }
     void incSize()
     {
@@ -48,11 +44,13 @@ public:
     }
     T getVal()
     {
-        return *val;
+        return val[0];
     }
     void setVal(T _val, size_t pos = 0)
     {
-        this->val[pos] = _val;
+        this->val = std::shared_ptr<T[]>(new T[pos+1]);
+        for (size_t i = 0; i < pos; i++)
+            this->val[i] = _val;
         return;
     }
 
@@ -158,7 +156,7 @@ public:
     Tree(T _val)     
     {
         numNodes = 1;
-        root = std::shared_ptr<Node<T>>(new Node<T>(_val));
+        root = std::make_shared<Node<T>>(_val);
     }
     Tree() 
     {
@@ -200,12 +198,12 @@ public:
     {
         if (root == nullptr)
         {
-            root = std::shared_ptr<Node<T>>(new Node<T>(_val));
+            root = std::make_shared<Node<T>>(_val);
             return;
         }
 
         std::shared_ptr<Node<T>> temp = nullptr;
-        std::shared_ptr<Node<T>> currNode = root;
+        auto currNode = root;
         T currVal;
         while ( currNode != nullptr )
         {
@@ -228,11 +226,11 @@ public:
         currVal = temp->getVal();
         if (_val < currVal)
         {
-            temp->left = std::shared_ptr<Node<T>>(new Node<T>(_val));
+            temp->left = std::make_shared<Node<T>>(_val);
         }
         else if (_val > currVal)
         {
-            temp->right = std::shared_ptr<Node<T>>(new Node<T>(_val));
+            temp->right = std::make_shared<Node<T>>(_val);
         }
         else
         {
@@ -260,7 +258,7 @@ public:
         if (root == nullptr)
             root = this->root;
 
-        std::shared_ptr<Node<T>> currNode = root;
+        auto currNode = root;
         while ( currNode->right != nullptr)
         {
             currNode = currNode->right;
@@ -272,7 +270,7 @@ public:
         if (root == nullptr)
             root = this->root;
 
-        std::shared_ptr<Node<T>> currNode = root;
+        auto currNode = root;
         while ( currNode->left != nullptr)
         {
             currNode = currNode->left;
@@ -295,22 +293,20 @@ int main()
     
     Tree<int> tree;
 
-    tree.insert(10);
-    tree.insert(5);
-    tree.insert(40);
-    tree.insert(2);
-    tree.insert(4);
+    tree.insert(30);
+    tree.insert(30);
+    tree.insert(30);
     tree.insert(15);
-    tree.insert(50);
-    tree.insert(6);
-    tree.insert(7);
-    tree.insert(20);
+    tree.insert(15);
+    tree.insert(45);
+    tree.insert(45);
+    tree.insert(45);
+    tree.insert(45);
+    tree.insert(30);
 
     tree.printTree();
 
-    tree.pop(5);
-
-    tree.printTree();
+    //tree.printTree();
 
     /*
      *  TO DO:
