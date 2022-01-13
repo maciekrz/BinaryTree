@@ -89,6 +89,18 @@ public:
         temp->val = this->val + node->val;
         return temp;
     }
+    Node operator = (const Node& node)
+    {
+        return std::swap(node);
+    }
+    Node operator = (const std::shared_ptr<Node>& node)
+    {
+        this->val = node->val;
+        this->left = node->left;
+        this->right = node->right;
+
+        return *this;
+    }
 };
 
 template<typename T>
@@ -211,10 +223,11 @@ private:
 
         if (currNode != nullptr)
         {
-            //values[index-1] = currNode;
+            values[index-1] = currNode;
         }
         else
         {
+            values[index-1] = nullptr;
             return;
         }
 
@@ -303,12 +316,12 @@ public:
         if (_val < currVal)
         {
             //temp->left = std::shared_ptr<Node<T>>(_val);
-            temp->left = std::shared_ptr<Node<T>>(new Node<T>(_val));
+            temp->left = std::make_shared<Node<T>>(_val);
         }
         else if (_val > currVal)
         {
             //temp->right = std::shared_ptr<Node<T>>(_val);
-            temp->right = std::shared_ptr<Node<T>>(new Node<T>(_val));
+            temp->right = std::make_shared<Node<T>>(_val);
         }
         else
         {
