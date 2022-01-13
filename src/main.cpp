@@ -38,7 +38,7 @@ public:
     {
         if (val != NULL && val != nullptr)
         {
-            delete val;
+            //delete val;
         }
     }
     
@@ -194,7 +194,7 @@ private:
         return nullptr;
     }
     
-    void valArr(std::shared_ptr<bool[]> isInitialized, std::shared_ptr<T[]> values, std::shared_ptr<Node<T>> currNode = nullptr, size_t index = 1) const
+    void valArr(std::shared_ptr<bool[]> isInitialized, std::shared_ptr<T[]> values, std::shared_ptr<size_t[]> number, std::shared_ptr<Node<T>> currNode = nullptr, size_t index = 1) const
     {
         if (currNode == nullptr)
             currNode = this->root;
@@ -203,6 +203,8 @@ private:
         {
             isInitialized[index-1] = true;
             values[index-1] = currNode->getVal();
+            number[index-1] = currNode->getSize();
+            std::cout << values[index-1] << " " << number[index-1] << " " << isInitialized[index-1] << "\n";
         }
         else
         {
@@ -211,10 +213,10 @@ private:
         }
 
         if (currNode->left != nullptr)
-            valArr(isInitialized, values, currNode->left, index*2);
+            valArr(isInitialized, values, number, currNode->left, index*2);
         
         if (currNode->right != nullptr)
-            valArr(isInitialized, values, currNode->right, index*2+1);
+            valArr(isInitialized, values, number, currNode->right, index*2+1);
     }
     void nodeArr(std::shared_ptr<Node<T>[]> values, std::shared_ptr<Node<T>> currNode = nullptr, size_t index = 1) const
     {
@@ -345,7 +347,7 @@ public:
     Node<T> operator [](int index)
     {
         size_t arrSize = pow(2, this->height());
-        std::shared_ptr<Node<T>[]> values;
+        std::shared_ptr<Node<T>[]> values(new Node<T>[arrSize]);
 
         this->nodeArr(values);
 
@@ -415,14 +417,15 @@ public:
 
         size_t arrSize = pow(2, this->height());
         std::shared_ptr<T[]> values(new T[arrSize]);
+        std::shared_ptr<size_t[]> number(new size_t[arrSize]);
         std::shared_ptr<bool[]> isInitialized(new bool[arrSize]);
 
-        this->valArr(isInitialized, values);
+        this->valArr(isInitialized, values, number);
 
         for (size_t i = 0; i < arrSize; i++)
         {
             if (isInitialized[i])
-                outFile << values[i] << "\n";
+                outFile << values[i] << " " << number[i] << "\n";
         }
     }
     void fromFile()
@@ -433,12 +436,19 @@ public:
         inFile.open(fileName);
 
         T input;
+        size_t number = 0;
         std::string str;
 
-        while(inFile >> str)
+        if(inFile)
         {
-            std::stringstream(str) >> input;
-            this->insert(input);
+            while(std::getline(inFile, str))
+            {
+                std::stringstream(str) >> input >> number;
+                std::cout << input << " " << number << "\n";
+                for (size_t i = 0; i < number; i++)
+                    this->insert(input);
+                
+            }
         }
     }
 
@@ -473,6 +483,7 @@ int main()
     
     Tree<int> tree;
 
+    
     tree.insert(10);
     tree.insert(5);
     tree.insert(15);
@@ -483,19 +494,10 @@ int main()
 
     tree.printTree();
 
-    tree.pop(5);
-    tree.pop(10);
-    tree.insert(7);
-
-    tree.printTree();
-
-    std::cout << tree[0].getVal();
-
 
     /*
      *  TO DO:
-     *  * SORTING
-     *  * MAYBE SOMETHING MORE
+     *  * SPLIT THE FILE INTO HEADERS
      */
 
 }
