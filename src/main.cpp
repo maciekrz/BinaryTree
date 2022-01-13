@@ -10,7 +10,8 @@ class Node
 {
 private:
     size_t size;
-    std::shared_ptr<T[]> val;
+    //std::shared_ptr<T[]> val;
+    T *val;
 public:
     std::shared_ptr<Node> left;
     std::shared_ptr<Node> right;
@@ -18,18 +19,28 @@ public:
     Node()
     {
         size = 1;
-        this->val = std::make_shared<T[]>();
+        //this->val = std::make_shared<T[]>();
+        this->val = new T [size];
         this->left = nullptr;
         this->right = nullptr;
     }
     Node(T _val)
     {
         size = 1;
-        this->val = std::make_shared<T[]>(_val);
+        //this->val = std::make_shared<T[]>(_val);
+        this->val = new T [size];
+        this->val[0] = _val;
         this->left = nullptr;
         this->right = nullptr;
     }
-    ~Node() = default;
+    //~Node() = default;
+    ~Node()
+    {
+        if (val != NULL && val != nullptr)
+        {
+            delete val;
+        }
+    }
     
     size_t getSize() const
     {
@@ -38,7 +49,12 @@ public:
     void incSize()
     {
         this->size++;
+        this->val = new T [size];
         return;
+    }
+    void setSize(const size_t newSize)
+    {
+        this->size = newSize;
     }
     T getVal() const
     {
@@ -46,9 +62,12 @@ public:
     }
     void setVal(T _val, size_t pos = 0)
     {
-        this->val = std::shared_ptr<T[]>(new T[pos+1]);
-        for (size_t i = 0; i < pos; i++)
+        //this->val = std::shared_ptr<T[]>(new T[pos+1]);
+        this->val = new T [pos+1];
+        for (size_t i = 0; i <= pos; i++)
+        {
             this->val[i] = _val;
+        }
         return;
     }
 
@@ -122,36 +141,45 @@ private:
             return root;
         }
 
-        std::shared_ptr<Node<T>> popped = nullptr;
+        //std::shared_ptr<Node<T>> popped = nullptr;
         if (currNode != nullptr)
         {
             if (currNode->left == nullptr && currNode->right == nullptr)
             {
-                popped = currNode;
+                //popped = currNode;
                 currNode = nullptr;
                 return nullptr;
             }
             else if (currNode->left == nullptr)
             {
-                popped = currNode;
+                //popped = currNode;
+                currNode->setSize(currNode->right->getSize());
                 currNode = currNode->right;
                 return currNode;
             }
             else if (currNode->right == nullptr)
             {
-                popped = currNode;
+                //popped = currNode;
+                currNode->setSize(currNode->left->getSize());
                 currNode = currNode->left;
                 return currNode;
             }
             else
             {
+                /*
                 currNode = this->min(root->right);
                 root->setVal(currNode->getVal());
                 root->right = pop_helper(currNode->getVal(), root->right);
                 return root;
+                */
+                currNode->setSize(this->min(root->right)->getSize());
+                currNode = this->min(root->right);
+                root->setVal(currNode->getVal());
+                root->right = this->pop_helper(currNode->getVal(), root->right);
+                return root;
             }
         }
-        return root;
+        return nullptr;
     }
     
     void valArr(std::shared_ptr<bool[]> isInitialized, std::shared_ptr<T[]> values, std::shared_ptr<Node<T>> currNode = nullptr, size_t index = 1) const
@@ -176,14 +204,14 @@ private:
         if (currNode->right != nullptr)
             valArr(isInitialized, values, currNode->right, index*2+1);
     }
-    void nodeArr(std::shared_ptr<std::shared_ptr<T>[]> values, std::shared_ptr<Node<T>> currNode = nullptr, size_t index = 1) const
+    void nodeArr(std::shared_ptr<Node<T>[]> values, std::shared_ptr<Node<T>> currNode = nullptr, size_t index = 1) const
     {
         if (currNode == nullptr)
             currNode = this->root;
 
         if (currNode != nullptr)
         {
-            values[index-1] = currNode;
+            //values[index-1] = currNode;
         }
         else
         {
@@ -191,10 +219,10 @@ private:
         }
 
         if (currNode->left != nullptr)
-            valArr(values, currNode->left, index*2);
+            nodeArr(values, currNode->left, index*2);
         
         if (currNode->right != nullptr)
-            valArr(values, currNode->right, index*2+1);
+            nodeArr(values, currNode->right, index*2+1);
     }
 
 
@@ -203,7 +231,7 @@ public:
 
     Tree(T _val)     
     {
-        this->root = std::make_shared<Node<T>>(_val);
+        this->root = std::shared_ptr<Node<T>>(new Node<T>(_val));
     }
     Tree() 
     {
@@ -245,12 +273,13 @@ public:
     {
         if (this->root == nullptr)
         {
-            this->root = std::make_shared<Node<T>>(_val);
+            //this->root = std::shared_ptr<Node<T>>(_val);
+            root = std::shared_ptr<Node<T>>(new Node<T>(_val));
             return;
         }
 
         std::shared_ptr<Node<T>> temp = nullptr;
-        auto currNode = this->root;
+        std::shared_ptr<Node<T>> currNode = this->root;
         T currVal;
         while ( currNode != nullptr )
         {
@@ -273,11 +302,13 @@ public:
         currVal = temp->getVal();
         if (_val < currVal)
         {
-            temp->left = std::make_shared<Node<T>>(_val);
+            //temp->left = std::shared_ptr<Node<T>>(_val);
+            temp->left = std::shared_ptr<Node<T>>(new Node<T>(_val));
         }
         else if (_val > currVal)
         {
-            temp->right = std::make_shared<Node<T>>(_val);
+            //temp->right = std::shared_ptr<Node<T>>(_val);
+            temp->right = std::shared_ptr<Node<T>>(new Node<T>(_val));
         }
         else
         {
@@ -298,10 +329,10 @@ public:
         return std::swap(_tree);
     }
 
-    std::shared_ptr<Node<T>> operator [](int index)
+    Node<T> operator [](int index)
     {
         size_t arrSize = pow(2, this->height());
-        std::shared_ptr<std::shared_ptr<T>[]> values;
+        std::shared_ptr<Node<T>[]> values;
 
         this->nodeArr(values);
 
@@ -429,27 +460,23 @@ int main()
     
     Tree<int> tree;
 
-    tree.insert(30);
-    tree.insert(60);
-    tree.insert(15);
-    tree.insert(5);
     tree.insert(10);
-    tree.insert(12);
-    tree.insert(14);
-    tree.insert(16);
-    tree.insert(45);
-    tree.insert(100);
-    tree.insert(200);
+    tree.insert(5);
+    tree.insert(15);
+    tree.insert(20);
+    tree.insert(7);
+    tree.insert(7);
+    tree.insert(2);
 
-    tree.rsort();
-    tree.printTree();
-    tree.sort();
     tree.printTree();
 
-    tree.fromFile();
-    tree.toFile();
+    tree.pop(5);
+    tree.pop(10);
+    tree.insert(7);
 
-    //std::cout << tree[0]->getVal();
+    tree.printTree();
+
+    std::cout << tree[0].getVal();
 
 
     /*
