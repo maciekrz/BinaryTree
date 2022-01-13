@@ -36,9 +36,9 @@ public:
     //~Node() = default;
     ~Node()
     {
-        if (val != NULL && val != nullptr)
+        if (val != NULL && val != nullptr && this != nullptr)
         {
-            //delete val;
+            delete val;       // causes memory error (???)
         }
     }
     
@@ -483,7 +483,6 @@ int main()
     
     Tree<int> tree;
 
-    
     tree.insert(10);
     tree.insert(5);
     tree.insert(15);
