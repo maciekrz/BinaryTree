@@ -36,7 +36,7 @@ public:
     //~Node() = default;
     ~Node()
     {
-        if (val != NULL && val != nullptr && this != nullptr)
+        if (val != NULL && val != nullptr)
         {
             delete val;       // causes memory error (???)
         }
@@ -204,7 +204,6 @@ private:
             isInitialized[index-1] = true;
             values[index-1] = currNode->getVal();
             number[index-1] = currNode->getSize();
-            std::cout << values[index-1] << " " << number[index-1] << " " << isInitialized[index-1] << "\n";
         }
         else
         {
@@ -408,9 +407,9 @@ public:
         return greater(leftHeight, rightHeight);
     }
 
-    void toFile() const
+    void toFile(std::string fileName = "") const
     {
-        std::string fileName = "./data/output.txt";
+        fileName = (fileName == "") ? "./data/input.txt" : fileName;
 
         std::ofstream outFile;
         outFile.open(fileName);
@@ -428,9 +427,9 @@ public:
                 outFile << values[i] << " " << number[i] << "\n";
         }
     }
-    void fromFile()
+    void fromFile(std::string fileName = "")
     {
-        std::string fileName = "./data/input.txt";
+        fileName = (fileName == "") ? "./data/input.txt" : fileName;
 
         std::ifstream inFile;
         inFile.open(fileName);
@@ -444,7 +443,6 @@ public:
             while(std::getline(inFile, str))
             {
                 std::stringstream(str) >> input >> number;
-                std::cout << input << " " << number << "\n";
                 for (size_t i = 0; i < number; i++)
                     this->insert(input);
                 
@@ -458,7 +456,8 @@ public:
 
         while (this->root != nullptr)
         {
-            newTree.insert(this->min()->getVal());
+            for (size_t i = 0; i < this->min()->getSize(); i++)
+                newTree.insert(this->min()->getVal());
             this->pop(this->min()->getVal());
         }
         std::swap(this->root, newTree.root);
@@ -489,9 +488,12 @@ int main()
     tree.insert(20);
     tree.insert(7);
     tree.insert(7);
+    tree.insert(7);
+    tree.insert(2);
     tree.insert(2);
 
     tree.printTree();
+
 
 
     /*
