@@ -327,9 +327,9 @@ public:
         return std::swap(_tree);
     }
 
-    Node<T> operator [](int index) const
+    Node<T> operator [](const int index) const
     {
-        constexpr size_t arrSize = pow(2, this->height());
+        const size_t arrSize = pow(2, this->height());
         std::shared_ptr<Node<T>[]> values(new Node<T>[arrSize]);
 
         this->nodeArr(values);
@@ -363,7 +363,7 @@ public:
         return currNode;
     }
     
-    void pop(T _val)
+    void pop(const T _val)
     {
         if (this->find(_val) != nullptr)
             this->root = this->pop_helper(_val);
@@ -386,7 +386,7 @@ public:
         leftHeight = (currNode->left == nullptr) ? 0 : height(currNode->left)+1;
         rightHeight = (currNode->right == nullptr) ? 0 : height(currNode->right)+1;
 
-        auto greater = [](size_t x, size_t y) { return (x > y) ? x : y; };
+        auto greater = [](const size_t x, const size_t y) { return (x > y) ? x : y; };
 
         return greater(leftHeight, rightHeight);
     }
@@ -475,6 +475,8 @@ int main()
     tree.insert(7);
     tree.insert(2);
     tree.insert(2);
+
+    std::cout << tree[0].getVal();
 
     tree.printTree();
 
