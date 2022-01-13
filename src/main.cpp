@@ -10,7 +10,6 @@ class Node
 {
 private:
     size_t size;
-    //std::shared_ptr<T[]> val;
     T *val;
 public:
     std::shared_ptr<Node> left;
@@ -19,26 +18,23 @@ public:
     Node()
     {
         size = 1;
-        //this->val = std::make_shared<T[]>();
         this->val = new T [size];
         this->left = nullptr;
         this->right = nullptr;
     }
-    Node(T _val)
+    Node(const T _val)
     {
         size = 1;
-        //this->val = std::make_shared<T[]>(_val);
         this->val = new T [size];
         this->val[0] = _val;
         this->left = nullptr;
         this->right = nullptr;
     }
-    //~Node() = default;
     ~Node()
     {
         if (val != NULL && val != nullptr)
         {
-            delete val;       // causes memory error (???)
+            delete val;
         }
     }
     
@@ -60,9 +56,8 @@ public:
     {
         return val[0];
     }
-    void setVal(T _val, size_t pos = 0)
+    void setVal(const T _val, size_t pos = 0)
     {
-        //this->val = std::shared_ptr<T[]>(new T[pos+1]);
         this->val = new T [pos+1];
         for (size_t i = 0; i <= pos; i++)
         {
@@ -107,7 +102,7 @@ template<typename T>
 class Tree
 {
 private:
-    std::string spacing(size_t n) const
+    std::string spacing(const size_t n) const
     {
         std::string spc = "";
         for (size_t i = 0; i < n; i++)
@@ -132,7 +127,7 @@ private:
         printTree_helper(currNode->right, level+1);
     }
 
-    std::shared_ptr<Node<T>> pop_helper(T _val, std::shared_ptr<Node<T>> root = nullptr) 
+    std::shared_ptr<Node<T>> pop_helper(const T _val, std::shared_ptr<Node<T>> root = nullptr) 
     {
         if (root == nullptr)
             root = this->root;
@@ -153,41 +148,33 @@ private:
             return root;
         }
 
-        //std::shared_ptr<Node<T>> popped = nullptr;
         if (currNode != nullptr)
         {
             if (currNode->left == nullptr && currNode->right == nullptr)
             {
-                //popped = currNode;
                 currNode = nullptr;
                 return nullptr;
             }
             else if (currNode->left == nullptr)
             {
-                //popped = currNode;
                 currNode->setSize(currNode->right->getSize());
                 currNode = currNode->right;
                 return currNode;
             }
             else if (currNode->right == nullptr)
             {
-                //popped = currNode;
                 currNode->setSize(currNode->left->getSize());
                 currNode = currNode->left;
                 return currNode;
             }
             else
             {
-                /*
-                currNode = this->min(root->right);
-                root->setVal(currNode->getVal());
-                root->right = pop_helper(currNode->getVal(), root->right);
-                return root;
-                */
                 currNode->setSize(this->min(root->right)->getSize());
                 currNode = this->min(root->right);
+
                 root->setVal(currNode->getVal());
                 root->right = this->pop_helper(currNode->getVal(), root->right);
+
                 return root;
             }
         }
@@ -243,7 +230,7 @@ private:
 public:
     std::shared_ptr<Node<T>> root = nullptr;
 
-    Tree(T _val)     
+    Tree(const T _val)     
     {
         this->root = std::shared_ptr<Node<T>>(new Node<T>(_val));
     }
@@ -253,7 +240,7 @@ public:
     }
     ~Tree() = default;
 
-    std::shared_ptr<Node<T>> find(T _val) const
+    std::shared_ptr<Node<T>> find(const T _val) const
     {
         std::shared_ptr<Node<T>> currNode = this->root;
         while ( currNode != nullptr && _val != currNode->getVal() )
@@ -283,11 +270,10 @@ public:
         }
     }
 
-    void insert(T _val)
+    void insert(const T _val)
     {
         if (this->root == nullptr)
         {
-            //this->root = std::shared_ptr<Node<T>>(_val);
             root = std::shared_ptr<Node<T>>(new Node<T>(_val));
             return;
         }
@@ -316,12 +302,10 @@ public:
         currVal = temp->getVal();
         if (_val < currVal)
         {
-            //temp->left = std::shared_ptr<Node<T>>(_val);
             temp->left = std::make_shared<Node<T>>(_val);
         }
         else if (_val > currVal)
         {
-            //temp->right = std::shared_ptr<Node<T>>(_val);
             temp->right = std::make_shared<Node<T>>(_val);
         }
         else
@@ -343,9 +327,9 @@ public:
         return std::swap(_tree);
     }
 
-    Node<T> operator [](int index)
+    Node<T> operator [](int index) const
     {
-        size_t arrSize = pow(2, this->height());
+        constexpr size_t arrSize = pow(2, this->height());
         std::shared_ptr<Node<T>[]> values(new Node<T>[arrSize]);
 
         this->nodeArr(values);
