@@ -1,9 +1,10 @@
-#include "headers/node.hpp"
-#include "headers/tree.hpp"
+//#include "headers/node.h" // with header files the compiler can't
+//#include "headers/tree.h" // compile and throws errors - no idea why
+#include "node.cpp"
+#include "tree.cpp"
 
 int main()
 {
-
     Tree<int> tree;
 
     tree.insert(10);

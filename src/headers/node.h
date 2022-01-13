@@ -1,15 +1,16 @@
 #pragma once
+#include <cstdio>
 #include <memory>
 
 template <typename T>
 class Node {
 private:
-    size_t size;
-    T* val;
+    size_t size;        // number of values in one node
+    T* val;             // array of values
 
 public:
-    std::shared_ptr<Node> left;
-    std::shared_ptr<Node> right;
+    std::shared_ptr<Node> left;     // left child
+    std::shared_ptr<Node> right;    // right child
 
     Node();
     Node(const T _val);

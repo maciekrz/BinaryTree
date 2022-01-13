@@ -1,5 +1,5 @@
 #pragma once
-#include "node.hpp"
+#include "node.h"
 #include <fstream>
 #include <iostream>
 #include <math.h>
@@ -20,7 +20,7 @@ private:
     void nodeArr(std::shared_ptr<Node<T>[]> values, std::shared_ptr<Node<T>> currNode = nullptr, size_t index = 1) const;
 
 public:
-    std::shared_ptr<Node<T>> root = nullptr;
+    std::shared_ptr<Node<T>> root = nullptr;        // the root of the tree
 
     Tree(const T _val);
 
@@ -34,7 +34,7 @@ public:
 
     void printTree() const;
 
-    Tree& operator=(Tree& _tree) noexcept;
+    Tree& operator=(Tree& _tree);
 
     Node<T> operator[](const int index) const;
 

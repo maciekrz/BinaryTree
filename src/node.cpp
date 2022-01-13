@@ -1,5 +1,8 @@
-#include "headers/node.hpp"
+#include "headers/node.h"
 
+/*
+ * CONSTRUCTORS AND A DESTRUCTOR
+ */
 template <typename T>
 Node<T>::Node()
 {
@@ -8,6 +11,7 @@ Node<T>::Node()
     this->left = nullptr;
     this->right = nullptr;
 }
+
 template <typename T>
 Node<T>::Node(const T _val)
 {
@@ -17,6 +21,7 @@ Node<T>::Node(const T _val)
     this->left = nullptr;
     this->right = nullptr;
 }
+
 template <typename T>
 Node<T>::~Node()
 {
@@ -25,28 +30,27 @@ Node<T>::~Node()
     }
 }
 
+/*
+ * GETTERS AND SETTERS
+ */
 template <typename T>
 size_t Node<T>::getSize() const
 {
     return this->size;
 }
-template <typename T>
-void Node<T>::incSize()
-{
-    this->size++;
-    this->val = new T[size];
-    return;
-}
+
 template <typename T>
 void Node<T>::setSize(const size_t newSize)
 {
     this->size = newSize;
 }
+
 template <typename T>
 T Node<T>::getVal() const
 {
     return val[0];
 }
+
 template <typename T>
 void Node<T>::setVal(const T _val, size_t pos)
 {
@@ -57,6 +61,20 @@ void Node<T>::setVal(const T _val, size_t pos)
     return;
 }
 
+/*
+ * A method for incrementing the size of a node when a duplicate occurs
+ */
+template <typename T>
+void Node<T>::incSize()
+{
+    this->size++;
+    this->val = new T[size];
+    return;
+}
+
+/*
+ * OVERLOADED OPERATORS
+ */
 template <typename T>
 bool Node<T>::operator>(const Node& node) const
 {
