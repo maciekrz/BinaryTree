@@ -23,6 +23,12 @@ Node<T>::Node(const T _val)
 }
 
 template <typename T>
+Node<T>::Node(const Node& node)
+{
+    std::swap(node);
+}
+
+template <typename T>
 Node<T>::~Node()
 {
     if (val != NULL && val != nullptr) {

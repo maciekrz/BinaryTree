@@ -25,6 +25,8 @@ public:
 
     Tree(const T _val);
 
+    Tree(const Tree& tree);
+
     Tree();
 
     ~Tree() = default;
@@ -35,7 +37,7 @@ public:
 
     void printTree() const;
 
-    Tree& operator=(Tree& _tree);
+    Tree& operator=(const Tree& _tree);
 
     Node<T> operator[](const int index) const;
 

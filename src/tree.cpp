@@ -1,12 +1,17 @@
 #include "headers/tree.h"
 
 /*
- * CONSTRUCTORS
- */ 
+ * CONSTRUCTORS */ 
 template <typename T>
 Tree<T>::Tree(const T _val)
 {
     this->root = std::shared_ptr<Node<T>>(new Node<T>(_val));
+}
+
+template <typename T>
+Tree<T>::Tree(const Tree& tree)
+{
+    *this = tree;
 }
 
 template <typename T>
@@ -389,9 +394,11 @@ void Tree<T>::rsort()
  * OVERLOADED OPERATORS
  */
 template <typename T>
-Tree<T>& Tree<T>::operator=(Tree& _tree) 
+Tree<T>& Tree<T>::operator=(const Tree& _tree) 
 {
-    return std::swap(_tree);
+    //std::swap(this->root, _tree.root);
+    this->root = _tree.root;
+    return *this;
 }
 
 template <typename T>

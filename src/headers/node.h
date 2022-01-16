@@ -14,6 +14,7 @@ public:
 
     Node();
     Node(const T _val);
+    Node(const Node& node);
     ~Node();
 
     size_t getSize() const;

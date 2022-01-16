@@ -90,6 +90,12 @@ int main()
     tree2.sort();
     tree2.printTree();
 
+    std::getline(std::cin, pause);
+
+    std::cout << "\ttree3 CONSTRUCTED WITH tree2 AS CONSTRUCTOR PARAM:";
+    Tree<std::string> tree3(tree2);
+    tree3.printTree();
+
 
     std::getline(std::cin, pause);
     std::cout << "\n";
