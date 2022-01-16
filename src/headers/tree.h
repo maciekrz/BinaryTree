@@ -1,5 +1,6 @@
 #pragma once
 #include "node.h"
+#include "../node.cpp"
 #include <fstream>
 #include <iostream>
 #include <math.h>

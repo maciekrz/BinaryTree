@@ -1,4 +1,3 @@
-#include "headers/node.h"
 #include "headers/tree.h"
 
 /*
@@ -237,6 +236,7 @@ void Tree<T>::printTree() const
 {
     std::cout << "\n";
     printTree_helper(this->root);
+    std::cout << "Tree's height:\t" << this->height() << "\n";
 }
 
 /*
@@ -312,7 +312,7 @@ size_t Tree<T>::height(std::shared_ptr<Node<T>> currNode, size_t result) const
 template <typename T>
 void Tree<T>::toFile(std::string fileName) const
 {
-    fileName = (fileName == "") ? "./data/input.txt" : fileName;
+    fileName = (fileName == "") ? "./data/output.txt" : fileName;
 
     std::ofstream outFile;
     outFile.open(fileName);

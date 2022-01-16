@@ -1,71 +1,97 @@
-//#include "headers/node.h" // with header files the compiler can't
-//#include "headers/tree.h" // compile and throws errors - no idea why
-#include "node.cpp"
 #include "tree.cpp"
 
-void run(std::string inFileName, std::string outFileName);
-void flags(int argc, char* argv[], std::string* inFileName, std::string* outFileName, bool* r_flag);
-
-int main(int argc, char* argv[])
+int main()
 {
-    bool r_flag = false;
-    std::string inFile, outFile = "";
-    flags(argc, argv, &inFile, &outFile, &r_flag);
-
-    if (r_flag == false)
-    {
-        std::cout << "\nAvailable flags:\n"
-        << "-i / --input path_to_file  --  specifies the input file (data/input.txt if not used)\n"
-        << "-o / --output path_to_file  --  specifies the output file (data/output.txt if not used)\n"
-        << "-r / --run  --  runs the program\n\n";
-        return 0;
-    }
+    std::cout << "\n";
+    std::string pause;
 
     Tree<int> tree;
 
+    std::cout << "\tINITIAL TREE:";
     tree.insert(10);
     tree.insert(5);
+    tree.insert(5);
+    tree.insert(5);
     tree.insert(15);
+    tree.insert(2);
+    tree.insert(1);
+    tree.insert(7);
+    tree.printTree();
+
+    std::getline(std::cin, pause);
+    
+    std::cout << "\tDECREASING SORT:";
+    tree.rsort();
+    tree.printTree();
+
+    std::getline(std::cin, pause);
+
+    std::cout << "\tNEW ELEMENTS:";
+    tree.insert(25);
     tree.insert(20);
-    tree.insert(7);
-    tree.insert(7);
-    tree.insert(7);
-    tree.insert(2);
-    tree.insert(2);
+    tree.insert(20);
+    tree.insert(30);
+    tree.insert(15);
 
     tree.printTree();
 
-    /*
-     *  TO DO:
-     *  * SPLIT THE FILE INTO HEADERS
-     */
-}
+    std::getline(std::cin, pause);
 
-void run(std::string inFileName, std::string outFileName)
-{
-    std::string option = "";
-}
+    std::cout << "\tTREE WITH ELEMENTS FROM FILE:";
+    tree.fromFile();
+    tree.printTree();
 
-void flags(int argc, char* argv[], std::string* inFileName, std::string* outFileName, bool* r_flag)
-{
-    for (int i = 1; i < argc; i++)
-    {
-        auto argument = std::string(argv[i]);
-        if (argument == "-i" || argument == "--input")
-        {
-            *inFileName = std::string(argv[i+1]);
-            std::cout << "Input data file name: " << *inFileName << "\n";
-        }
-        else if (argument == "-o" || argument == "--output")
-        {
-            *outFileName = std::string(argv[i+1]);
-            std::cout << "Output data file name: " << *outFileName << "\n";
-        }
-        else if (argument == "-r" || argument == "--run")
-        {
-            *r_flag = true;
-        }
-    }
-    std::cout << "Done\n";
-    return;
+    std::getline(std::cin, pause);
+
+    std::cout << "\tPOPPING 15, 11, 6, 80, 5:";
+    tree.pop(15);
+    tree.pop(11);
+    tree.pop(6);
+    tree.pop(80);
+    tree.pop(5);
+    tree.printTree();
+
+    std::getline(std::cin, pause);
+
+    std::cout << "\tINCREASING SORT:";
+    tree.sort();
+    tree.printTree();
+    tree.toFile();
+
+    std::getline(std::cin, pause);
+
+    std::cout << "\tA TREE USING STRINGS:";
+    Tree<std::string> tree2;
+    tree2.insert("first");
+    tree2.insert("first");
+    tree2.insert("first");
+    tree2.insert("second");
+    tree2.insert("third");
+    tree2.insert("third");
+    tree2.insert("fourth");
+    tree2.insert("fifth");
+    tree2.insert("fifth");
+    tree2.insert("sixth");
+    tree2.insert("sixth");
+    tree2.insert("sixth");
+    tree2.insert("sixth");
+    tree2.insert("seventh");
+    tree2.printTree();
+
+    std::getline(std::cin, pause);
+
+    std::cout << "\tREMOVING 'first':";
+    tree2.pop("first");
+    tree2.printTree();
+
+    std::getline(std::cin, pause);
+
+    std::cout << "\tSORTED:";
+    tree2.sort();
+    tree2.printTree();
+
+
+    std::getline(std::cin, pause);
+    std::cout << "\n";
+    return 0;
 }

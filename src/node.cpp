@@ -26,7 +26,7 @@ template <typename T>
 Node<T>::~Node()
 {
     if (val != NULL && val != nullptr) {
-        delete val;
+        //delete val;
     }
 }
 
