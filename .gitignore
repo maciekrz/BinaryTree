@@ -32,3 +32,8 @@
 *.app
 binarytree
 backup
+
+# LaTeX files
+*.aux
+*.log
+*.toc
