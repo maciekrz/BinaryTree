@@ -77,10 +77,41 @@ The class \textit{Node} is not very complex. Its members are:
 
 It also contains 3 different constructors, a destructor, setting and getting methods and overloaded operators.
 
+\subsubsection{Overloaded Operators}
+\begin{footnotesize}
+\begin{lstlisting}[language=C++]
+template <typename T>
+bool Node<T>::operator>(const Node& node) const
+{
+    return this->val > node->val;
+}
+template <typename T>
+bool Node<T>::operator<(const Node& node) const
+{
+    return this->val < node->val;
+}
+template <typename T>
+bool Node<T>::operator==(const Node& node) const
+{
+    return this->val == node->val;
+}
+template <typename T>
+Node<T> Node<T>::operator+(const Node& node)
+{
+    Node temp;
+    temp->val = this->val + node->val;
+    return temp;
+}
+\end{lstlisting}
+\end{footnotesize}
+
+Assignment / move operators are presented below, in the section \ref{Creating}.
+
 \subsection{Tree Class}
 This class is where the most important operations take place. Apart from methods its only meber is the root of the tree, which is a smart pointer to a object of type \textit{Node}. This class contains every method to meet the requirements.
 
-\subsubsection{Creating a Tree}
+\pagebreak
+\subsubsection{Creating a Tree\label{Creating}}
 The class \textit{Tree} has 3 different constructors: one default, and two with an argument: either a template value or an other tree. These constructors look as follows:
 \begin{footnotesize}
 \begin{lstlisting}[language=C++]
@@ -104,6 +135,7 @@ Tree<T>::Tree()
 \end{lstlisting}
 \end{footnotesize}
 
+\pagebreak
 To make the second constructor work the `=' operator had to be overloaded in such a way for both \textit{Tree} and \textit{Node} class:
 \begin{footnotesize}
 \begin{lstlisting}[language=C++]
@@ -112,6 +144,12 @@ Tree<T>& Tree<T>::operator=(const Tree& _tree)
 {
     this->root = _tree.root;
     return *this;
+}
+
+template <typename T>
+Node<T> Node<T>::operator=(const Node& node)
+{
+    return std::swap(node);
 }
 
 template <typename T>
@@ -377,9 +415,22 @@ and can access the tree's methods by using the `.' operator, eg.\
 \begin{lstlisting}[language=C++]
 int_tree.sort();
 str_tree.insert("abc");
-flt1_tree.toFile("file.txt")
+flt_tree1.toFile("file.txt")
 \end{lstlisting}
 \end{footnotesize}
 
+or access individual nodes, eg.\
+\begin{footnotesize}
+\begin{lstlisting}[language=C++]
+int x = int_tree[3].getVal();
+\end{lstlisting}
+\end{footnotesize}
+
+\section{Summary}
+During working on the project I have improved my knowledge on data structures, templates and pointers and also got to know new useful features, eg.\ default arguments. This implementation also taught me how recursion helps in many issues and when it cannot be used.
+
+Many programs take advantage of the \textit{tree} data structure, eg.\ the filesystem is a kind of a tree, although not a binary one. 
+
+Expanding the knowledge about different data structures helps organizing future projects in terms of choosing the right structure to save access time and improve performance.
 
 \end{document}
