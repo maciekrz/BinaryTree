@@ -16,7 +16,7 @@ private:
 
     std::shared_ptr<Node<T>> pop_helper(const T _val, std::shared_ptr<Node<T>> root = nullptr);
 
-    void valArr(std::shared_ptr<bool[]> isInitialized, std::shared_ptr<T[]> values, std::shared_ptr<size_t[]> number, std::shared_ptr<Node<T>> currNode = nullptr, size_t index = 1) const;
+    void valArr(std::shared_ptr<T[]> values, std::shared_ptr<size_t[]> number, std::shared_ptr<Node<T>> currNode = nullptr, size_t index = 1) const;
 
     void nodeArr(std::shared_ptr<Node<T>[]> values, std::shared_ptr<Node<T>> currNode = nullptr, size_t index = 1) const;
 

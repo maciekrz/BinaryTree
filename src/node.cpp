@@ -6,8 +6,8 @@
 template <typename T>
 Node<T>::Node()
 {
-    size = 1;
-    this->val = new T[size];
+    size = 0;
+    //this->val;            // value doesn't really need to be initialized - nodes are always constructed with parameters or given values at creation
     this->left = nullptr;
     this->right = nullptr;
 }
@@ -16,8 +16,7 @@ template <typename T>
 Node<T>::Node(const T _val)
 {
     size = 1;
-    this->val = new T[size];
-    this->val[0] = _val;
+    this->val = _val;
     this->left = nullptr;
     this->right = nullptr;
 }
@@ -29,12 +28,7 @@ Node<T>::Node(const Node& node)
 }
 
 template <typename T>
-Node<T>::~Node()
-{
-    if (val != NULL && val != nullptr) {
-        //delete val;
-    }
-}
+Node<T>::~Node() = default;
 
 /*
  * GETTERS AND SETTERS
@@ -54,16 +48,13 @@ void Node<T>::setSize(const size_t newSize)
 template <typename T>
 T Node<T>::getVal() const
 {
-    return val[0];
+    return val;
 }
 
 template <typename T>
-void Node<T>::setVal(const T _val, size_t pos)
+void Node<T>::setVal(const T _val)
 {
-    this->val = new T[pos + 1];
-    for (size_t i = 0; i <= pos; i++) {
-        this->val[i] = _val;
-    }
+    this->val = _val;
     return;
 }
 
@@ -74,7 +65,13 @@ template <typename T>
 void Node<T>::incSize()
 {
     this->size++;
-    this->val = new T[size];
+    return;
+}
+
+template <typename T>
+void Node<T>::decSize()
+{
+    this->size--;
     return;
 }
 

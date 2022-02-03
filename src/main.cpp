@@ -96,8 +96,11 @@ int main()
     Tree<std::string> tree3(tree2);
     tree3.printTree();
 
+    tree3.toFile("out.txt");
+
 
     std::getline(std::cin, pause);
     std::cout << "\n";
+
     return 0;
 }

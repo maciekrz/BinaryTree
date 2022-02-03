@@ -84,9 +84,9 @@ std::shared_ptr<Node<T>> Tree<T>::pop_helper(const T _val, std::shared_ptr<Node<
     }
     // after these if-statements the current node is either a nullptr or the node to be deleted
 
-    if (currNode != nullptr) {
+    if (currNode != nullptr && currNode->getSize() == 1) {
         if (currNode->left == nullptr && currNode->right == nullptr) {
-            currNode = nullptr;     // if the node has no children - simply delete it
+            currNode = nullptr;                             // if the node has no children - simply delete it
             return nullptr;
         } else if (currNode->left == nullptr) {
             currNode->setSize(currNode->right->getSize());  // preserving the ammount of values
@@ -106,30 +106,36 @@ std::shared_ptr<Node<T>> Tree<T>::pop_helper(const T _val, std::shared_ptr<Node<
             return root;
         }
     }
+    else {
+        currNode->decSize();
+        return root;
+    }
+    
     return nullptr;
 }
 
 /*
  * This function is responsible for creating an array of nodes' values, which
- * is important while outputting to a text file in the correct order. It also
- * utilizes two arrays - one containing boolean variables which indicate if
- * a node exists or not and the other one containing the number of values at
- * one node.
+ * is important while outputting to a text file in the correct order. It also 
+ * utilizes two arrays - one containing number of entries and the other one 
+ * containing the number of values at one node.
  */
 template <typename T>
-void Tree<T>::valArr(std::shared_ptr<bool[]> isInitialized, std::shared_ptr<T[]> values, std::shared_ptr<size_t[]> number, std::shared_ptr<Node<T>> currNode, size_t index) const
+void Tree<T>::valArr(std::shared_ptr<T[]> values, std::shared_ptr<size_t[]> number, std::shared_ptr<Node<T>> currNode, size_t index) const
 {
     if (currNode == nullptr)
         currNode = this->root;
 
     if (currNode != nullptr) {                      // appoint the node's value to the array if the node exists
-        isInitialized[index - 1] = true;
         values[index - 1] = currNode->getVal();
         number[index - 1] = currNode->getSize();
     } else {
-        isInitialized[index - 1] = false;
+        number[index - 1] = 0;
         return;
     }
+
+    if(currNode->right == nullptr && currNode->left == nullptr)
+        return;
 
     // repeat for the left and right subtree, the index is taken from:
     /*
@@ -140,11 +146,15 @@ void Tree<T>::valArr(std::shared_ptr<bool[]> isInitialized, std::shared_ptr<T[]>
      *  2 and 3 - root's children
      *  etc.
      */
-    if (currNode->left != nullptr)
-        valArr(isInitialized, values, number, currNode->left, index * 2);
+    if (currNode->left != nullptr) {
+        number[index * 2] = 0;
+        valArr(values, number, currNode->left, index * 2);
+    }
 
-    if (currNode->right != nullptr)
-        valArr(isInitialized, values, number, currNode->right, index * 2 + 1);
+    if (currNode->right != nullptr) {
+        number[index * 2 + 1] = 0;
+        valArr(values, number, currNode->right, index * 2 + 1);
+    }
 }
 
 /*
@@ -217,7 +227,6 @@ void Tree<T>::insert(const T _val)
         } else if (_val > currVal) {
             currNode = currNode->right;
         } else {
-            currNode = currNode;
             break;
         }
     }
@@ -228,7 +237,7 @@ void Tree<T>::insert(const T _val)
         temp->right = std::make_shared<Node<T>>(_val);
     } else {
         temp->incSize();
-        temp->setVal(_val, (temp->getSize()) - 1);
+        temp->setVal(_val);
     }
     return;
 }
@@ -325,12 +334,14 @@ void Tree<T>::toFile(std::string fileName) const
     size_t arrSize = pow(2, this->height());
     std::shared_ptr<T[]> values(new T[arrSize]);
     std::shared_ptr<size_t[]> number(new size_t[arrSize]);
-    std::shared_ptr<bool[]> isInitialized(new bool[arrSize]);
 
-    this->valArr(isInitialized, values, number);
+    for (size_t i = 0; i < arrSize; i++)
+        number[i] = 0;
+
+    this->valArr(values, number);
 
     for (size_t i = 0; i < arrSize; i++) {
-        if (isInitialized[i])
+        if (number[i] != 0)
             outFile << values[i] << " " << number[i] << "\n";
     }
 }
@@ -368,9 +379,11 @@ void Tree<T>::sort()
     Tree<T> newTree;
 
     while (this->root != nullptr) {
-        for (size_t i = 0; i < this->min()->getSize(); i++)
+        size_t x = this->min()->getSize();
+        for (size_t i = 0; i < x; i++) {
             newTree.insert(this->min()->getVal());
-        this->pop(this->min()->getVal());
+            this->pop(this->min()->getVal());
+        }
     }
     std::swap(this->root, newTree.root);
 }
@@ -396,7 +409,6 @@ void Tree<T>::rsort()
 template <typename T>
 Tree<T>& Tree<T>::operator=(const Tree& _tree) 
 {
-    //std::swap(this->root, _tree.root);
     this->root = _tree.root;
     return *this;
 }

@@ -6,7 +6,7 @@ template <typename T>
 class Node {
 private:
     size_t size;        // number of values in one node
-    T* val;             // array of values
+    T val;              // node's value
 
 public:
     std::shared_ptr<Node> left;     // left child
@@ -21,11 +21,13 @@ public:
 
     void incSize();
 
+    void decSize();
+
     void setSize(const size_t newSize);
 
     T getVal() const;
 
-    void setVal(const T _val, size_t pos = 0);
+    void setVal(const T _val);
 
     bool operator>(const Node& node) const;
 

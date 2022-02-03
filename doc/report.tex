@@ -188,7 +188,6 @@ void Tree<T>::insert(const T _val)
         } else if (_val > currVal) {
             currNode = currNode->right;
         } else {
-            currNode = currNode;
             break;
         }
     }
@@ -199,7 +198,7 @@ void Tree<T>::insert(const T _val)
         temp->right = std::make_shared<Node<T>>(_val);
     } else {
         temp->incSize();
-        temp->setVal(_val, (temp->getSize()) - 1);
+        temp->setVal(_val);
     }
     return;
 }
@@ -215,40 +214,44 @@ Removing a node happens within two methods. The first one's only responsibility 
 \begin{lstlisting}[language=C++]
 template <typename T>
 std::shared_ptr<Node<T>> Tree<T>::pop_helper(const T _val, 
-                                            std::shared_ptr<Node<T>> root) 
-{
-    if (root == nullptr) { root = this->root; }
+                                            std::shared_ptr<Node<T>> root) {
+    if (root == nullptr)
+        root = this->root;
 
     std::shared_ptr<Node<T>> currNode = root;
-    if (root == nullptr) { return root; }
+
+    if (root == nullptr)
+        return root;
 
     if (root->getVal() > _val) {
         root->left = this->pop_helper(_val, root->left);
         return root;
     } else if (root->getVal() < _val) {
-        root->right = this->pop_helper(_val, root->right);
+        root->right = this->pop_helper(_val, root->right); 
         return root;
     }
-
-    if (currNode != nullptr) {
+    if (currNode != nullptr && currNode->getSize() == 1) {
         if (currNode->left == nullptr && currNode->right == nullptr) {
             currNode = nullptr;
             return nullptr;
         } else if (currNode->left == nullptr) {
-            currNode->setSize(currNode->right->getSize());  
+            currNode->setSize(currNode->right->getSize()); 
             currNode = currNode->right;                    
             return currNode;
         } else if (currNode->right == nullptr) {
             currNode->setSize(currNode->left->getSize());
-            currNode = currNode->left;                    
+            currNode = currNode->left; 
             return currNode;
-        } else {                                         
+        } else { 
             currNode->setSize(this->min(root->right)->getSize());
             currNode = this->min(root->right);
             root->setVal(currNode->getVal());
-            root->right = this->pop_helper(currNode->getVal(), root->right);
+            root->right = this->pop_helper(currNode->getVal(), root->right); 
             return root;
         }
+    } else {
+        currNode->decSize();
+        return root;
     }
     return nullptr;
 }
@@ -256,34 +259,34 @@ std::shared_ptr<Node<T>> Tree<T>::pop_helper(const T _val,
 \end{footnotesize}
 \pagebreak
 
-The logic behind it is to find the node to be deleted and, accordingly to the number of its children, replace it with one of them. For two children the new node becomes its successor (a minimal node from the right subtree) and for one, it becomes the new node. This method will replace the old root of the tree with a new one.
+The logic behind it is to find the node to be deleted and, accordingly to the number of its children, replace it with one of them. For two children the new node becomes its successor (a minimal node from the right subtree) and for one, it becomes the new node. This method will replace the old root of the tree with a new one. In case of multiple entries in one node, their number is decreased.
 
 \subsubsection{Sorting}
 Sorting a binary tree results in obtaining a list. This implementation supports both increasing and decreasing sort. Methods responsible for it remove either a minimal or maximal element of the tree, depending if it's a increasing or decreasing sort, insert it to a new tree and finally return the new tree replacing the old one. The available methods are: \textit{sort()} and \textit{rsort()}.
 
 \pagebreak
 \subsubsection{Serialization}
-Serialization into a file is done by converting the tree into multiple arrays containing values and quantity of entries and boolean values indicating if such node is initialized, to keep the proper order of the nodes. The arrays are obtained using this method:
+Serialization into a file is done by converting the tree into two arrays, containing values and quantity of entries, to keep the proper order of the nodes. The arrays are obtained using this method:
 \begin{footnotesize}
 \begin{lstlisting}[language=C++]
 template <typename T>
-void Tree<T>::valArr(std::shared_ptr<bool[]> isInitialized, 
-                    std::shared_ptr<T[]> values, 
+void Tree<T>::valArr(std::shared_ptr<T[]> values, 
                     std::shared_ptr<size_t[]> number, 
                     std::shared_ptr<Node<T>> currNode, 
-                    size_t index) const
-{
+                    size_t index) const {
     if (currNode == nullptr)
         currNode = this->root;
 
-    if (currNode != nullptr) {                      
-        isInitialized[index - 1] = true;
+    if (currNode != nullptr) { 
         values[index - 1] = currNode->getVal();
         number[index - 1] = currNode->getSize();
     } else {
-        isInitialized[index - 1] = false;
+        number[index - 1] = 0;
         return;
     }
+    if (currNode->right == nullptr && currNode->left == nullptr)
+        return;
+
     // repeat for the left and right subtree, the index is taken from:
     /*
      *                      1
@@ -293,11 +296,14 @@ void Tree<T>::valArr(std::shared_ptr<bool[]> isInitialized,
      *  2 and 3 - root's children
      *  etc.
      */
-    if (currNode->left != nullptr)
-        valArr(isInitialized, values, number, currNode->left, index * 2);
-
-    if (currNode->right != nullptr)
-        valArr(isInitialized, values, number, currNode->right, index * 2 + 1);
+    if (currNode->left != nullptr) {
+        number[index * 2] = 0;
+        valArr(values, number, currNode->left, index * 2);
+    }
+    if (currNode->right != nullptr) {
+        number[index * 2 + 1] = 0;
+        valArr(values, number, currNode->right, index * 2 + 1);
+    }
 }
 \end{lstlisting}
 \end{footnotesize}
@@ -318,12 +324,14 @@ void Tree<T>::toFile(std::string fileName) const
     size_t arrSize = pow(2, this->height());
     std::shared_ptr<T[]> values(new T[arrSize]);
     std::shared_ptr<size_t[]> number(new size_t[arrSize]);
-    std::shared_ptr<bool[]> isInitialized(new bool[arrSize]);
 
-    this->valArr(isInitialized, values, number);
+    for (size_t i = 0; i < arrSize; i++)
+        number[i] = 0;
+
+    this->valArr(values, number);
 
     for (size_t i = 0; i < arrSize; i++) {
-        if (isInitialized[i])
+        if (number[i] != 0)
             outFile << values[i] << " " << number[i] << "\n";
     }
 }
@@ -361,11 +369,7 @@ root: 10 (1)
 8 1
 12 1
 5 1
-0 0
-0 0
-0 0
 15 2
-0 0
 \end{lstlisting}
 \end{footnotesize}
 
@@ -426,11 +430,14 @@ int x = int_tree[3].getVal();
 \end{lstlisting}
 \end{footnotesize}
 
-\section{Summary}
-During working on the project I have improved my knowledge on data structures, templates and pointers and also got to know new useful features, eg.\ default arguments. This implementation also taught me how recursion helps in many issues and when it cannot be used.
+\section{Conclusion}
+During working on the project I have improved my knowledge on data structures, templates and pointers and also got to know new useful features, eg.\ default arguments. This implementation also taught me how recursion helps in many issues and when it cannot be used. I have also learn how to use a build system, such as \textit{Make}, which further helps with creating projects.
 
 Many programs take advantage of the \textit{tree} data structure, eg.\ the filesystem is a kind of a tree, although not a binary one. 
 
 Expanding the knowledge about different data structures helps organizing future projects in terms of choosing the right structure to save access time and improve performance.
+
+\vspace{2cm}
+github link: \url{https://github.com/maciekrz/BinaryTree}
 
 \end{document}
