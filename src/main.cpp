@@ -19,7 +19,7 @@ int main()
     tree.printTree();
 
     std::getline(std::cin, pause);
-    
+
     std::cout << "\tDECREASING SORT:";
     tree.rsort();
     tree.printTree();
@@ -40,6 +40,8 @@ int main()
     std::cout << "\tTREE WITH ELEMENTS FROM FILE:";
     tree.fromFile();
     tree.printTree();
+    tree.toFile();
+    return 0;
 
     std::getline(std::cin, pause);
 
@@ -96,8 +98,21 @@ int main()
     Tree<std::string> tree3(tree2);
     tree3.printTree();
 
-    tree3.toFile("out.txt");
+    tree3.toFile();
 
+    // Tree<int> tree;
+
+    // tree.insert(5);
+    // tree.insert(2);
+    // tree.insert(3);
+    // tree.insert(4);
+    // tree.insert(8);
+    // tree.insert(7);
+
+    // tree.printTree();
+    // std::cout << tree.size << "\n";
+
+    // tree.toFile();
 
     std::getline(std::cin, pause);
     std::cout << "\n";

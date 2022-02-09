@@ -29,7 +29,7 @@ std::string Tree<T>::spacing(const size_t n) const
 {
     std::string spc = "";
     for (size_t i = 0; i < n; i++)
-        spc += "  ";
+        spc += "|  ";
     return spc;
 }
 
@@ -50,10 +50,10 @@ void Tree<T>::printTree_helper(std::shared_ptr<Node<T>> currNode, size_t level) 
     std::cout << currNode->getVal() << " (" << currNode->getSize() << ")"
               << "\n";
 
-    std::cout << spacing(level) << "  left: ";
+    std::cout << spacing(level) << "|  L: ";
     printTree_helper(currNode->left, level + 1);
 
-    std::cout << spacing(level) << "  right: ";
+    std::cout << spacing(level) << "|  R: ";
     printTree_helper(currNode->right, level + 1);
 }
 
@@ -114,12 +114,11 @@ std::shared_ptr<Node<T>> Tree<T>::pop_helper(const T _val, std::shared_ptr<Node<
     return nullptr;
 }
 
-/*
+/* NOT USED ANYMORE
  * This function is responsible for creating an array of nodes' values, which
- * is important while outputting to a text file in the correct order. It also 
- * utilizes two arrays - one containing number of entries and the other one 
+ * is important while outputting to a text file in the correct order. It also
+ * utilizes two arrays - one containing number of entries and the other one
  * containing the number of values at one node.
- */
 template <typename T>
 void Tree<T>::valArr(std::shared_ptr<T[]> values, std::shared_ptr<size_t[]> number, std::shared_ptr<Node<T>> currNode, size_t index) const
 {
@@ -138,14 +137,14 @@ void Tree<T>::valArr(std::shared_ptr<T[]> values, std::shared_ptr<size_t[]> numb
         return;
 
     // repeat for the left and right subtree, the index is taken from:
-    /*
-     *                      1
-     *              2               3
-     *          4       5       6       7
-     *  1 - root
-     *  2 and 3 - root's children
-     *  etc.
-     */
+    //
+    //                       1
+    //               2               3
+    //           4       5       6       7
+    //   1 - root
+    //   2 and 3 - root's children
+    //   etc.
+
     if (currNode->left != nullptr) {
         number[index * 2] = 0;
         valArr(values, number, currNode->left, index * 2);
@@ -156,29 +155,7 @@ void Tree<T>::valArr(std::shared_ptr<T[]> values, std::shared_ptr<size_t[]> numb
         valArr(values, number, currNode->right, index * 2 + 1);
     }
 }
-
-/*
- * Same as above but for nodes instead of values. Used for overloading [] operator
  */
-template <typename T>
-void Tree<T>::nodeArr(std::shared_ptr<Node<T>[]> values, std::shared_ptr<Node<T>> currNode, size_t index) const
-{
-    if (currNode == nullptr)
-        currNode = this->root;
-
-    if (currNode != nullptr) {
-        values[index - 1] = currNode;
-    } else {
-        values[index - 1] = nullptr;
-        return;
-    }
-
-    if (currNode->left != nullptr)
-        nodeArr(values, currNode->left, index * 2);
-
-    if (currNode->right != nullptr)
-        nodeArr(values, currNode->right, index * 2 + 1);
-}
 
 /*
  * A method for finding a node with specified value
@@ -250,7 +227,7 @@ void Tree<T>::printTree() const
 {
     std::cout << "\n";
     printTree_helper(this->root);
-    std::cout << "Tree's height:\t" << this->height() << "\n";
+    std::cout << "\nTree's height:\t" << this->height() << "\n";
 }
 
 /*
@@ -323,8 +300,9 @@ size_t Tree<T>::height(std::shared_ptr<Node<T>> currNode, size_t result) const
 /*
  * A method whitch outputs the values with their quantity to a file
  */
+/*
 template <typename T>
-void Tree<T>::toFile(std::string fileName) const
+void Tree<T>::toFileOld(std::string fileName) const
 {
     fileName = (fileName == "") ? "./data/output.txt" : fileName;
 
@@ -344,6 +322,36 @@ void Tree<T>::toFile(std::string fileName) const
         if (number[i] != 0)
             outFile << values[i] << " " << number[i] << "\n";
     }
+}
+*/
+template <typename T>
+std::string Tree<T>::printLevelToFile(std::shared_ptr<Node<T>> currNode, size_t level) const
+{
+    std::ostringstream osstr;
+    if (currNode == nullptr)
+        return "";
+    else if (level == 1) {
+        osstr << currNode->getVal() << " " << std::to_string(currNode->getSize()) << "\n";
+        return osstr.str();
+    }
+    else if (level > 1) {
+        return printLevelToFile(currNode->left, level-1) + printLevelToFile(currNode->right, level-1);
+    }
+    return "";
+}
+
+template <typename T>
+void Tree<T>::toFile() const
+{
+    std::ofstream outFile;
+    outFile.open("./data/output.txt");
+    if (!outFile)
+        return;
+
+    for (size_t i = 1; i <= this->height(); i++) {
+        outFile << printLevelToFile(this->root, i);
+    }
+    return;
 }
 
 /*
@@ -411,15 +419,4 @@ Tree<T>& Tree<T>::operator=(const Tree& _tree)
 {
     this->root = _tree.root;
     return *this;
-}
-
-template <typename T>
-Node<T> Tree<T>::operator[](const int index) const
-{
-    const size_t arrSize = pow(2, this->height());
-    std::shared_ptr<Node<T>[]> values(new Node<T>[arrSize]);
-
-    this->nodeArr(values);
-
-    return values[index];
 }

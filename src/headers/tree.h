@@ -16,11 +16,12 @@ private:
 
     std::shared_ptr<Node<T>> pop_helper(const T _val, std::shared_ptr<Node<T>> root = nullptr);
 
-    void valArr(std::shared_ptr<T[]> values, std::shared_ptr<size_t[]> number, std::shared_ptr<Node<T>> currNode = nullptr, size_t index = 1) const;
+    //void valArr(std::shared_ptr<T[]> values, std::shared_ptr<size_t[]> number, std::shared_ptr<Node<T>> currNode = nullptr, size_t index = 1) const;
 
-    void nodeArr(std::shared_ptr<Node<T>[]> values, std::shared_ptr<Node<T>> currNode = nullptr, size_t index = 1) const;
+    std::string printLevelToFile(std::shared_ptr<Node<T>> currNode, size_t level) const;
 
 public:
+
     std::shared_ptr<Node<T>> root = nullptr;        // the root of the tree
 
     Tree(const T _val);
@@ -39,8 +40,6 @@ public:
 
     Tree& operator=(const Tree& _tree);
 
-    Node<T> operator[](const int index) const;
-
     std::shared_ptr<Node<T>> max(std::shared_ptr<Node<T>> root = nullptr) const;
 
     std::shared_ptr<Node<T>> min(std::shared_ptr<Node<T>> root = nullptr) const;
@@ -49,7 +48,9 @@ public:
 
     size_t height(std::shared_ptr<Node<T>> currNode = nullptr, size_t result = 0) const;
 
-    void toFile(std::string fileName = "") const;
+    void toFile() const;
+
+    //void toFileOld(std::string fileName = "") const;
 
     void fromFile(std::string fileName = "");
 
