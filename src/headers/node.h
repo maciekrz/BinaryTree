@@ -4,13 +4,14 @@
 
 template <typename T>
 class Node {
+    typedef std::shared_ptr<Node> nodeptr;
 private:
     size_t size;        // number of values in one node
     T val;              // node's value
 
 public:
-    std::shared_ptr<Node> left;     // left child
-    std::shared_ptr<Node> right;    // right child
+    nodeptr left;     // left child
+    nodeptr right;    // right child
 
     Node();
     Node(const T _val);
@@ -39,5 +40,5 @@ public:
 
     Node operator=(const Node& node);
 
-    Node operator=(const std::shared_ptr<Node>& node);
+    Node operator=(const nodeptr& node);
 };

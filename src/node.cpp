@@ -106,7 +106,7 @@ Node<T> Node<T>::operator=(const Node& node)
     return std::swap(node);
 }
 template <typename T>
-Node<T> Node<T>::operator=(const std::shared_ptr<Node>& node)
+Node<T> Node<T>::operator=(const nodeptr& node)
 {
     this->val = node->val;
     this->left = node->left;

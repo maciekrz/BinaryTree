@@ -1,7 +1,8 @@
 #include "headers/tree.h"
 
 /*
- * CONSTRUCTORS */ 
+ * CONSTRUCTORS
+ */
 template <typename T>
 Tree<T>::Tree(const T _val)
 {

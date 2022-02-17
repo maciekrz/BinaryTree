@@ -9,20 +9,21 @@
 
 template <typename T>
 class Tree {
+    using nodeptr = std::shared_ptr<Node<T>>;
 private:
     std::string spacing(const size_t n) const;
 
-    void printTree_helper(std::shared_ptr<Node<T>> currNode, size_t level = 0) const;
+    void printTree_helper(nodeptr currNode, size_t level = 0) const;
 
-    std::shared_ptr<Node<T>> pop_helper(const T _val, std::shared_ptr<Node<T>> root = nullptr);
+    nodeptr pop_helper(const T _val, nodeptr root = nullptr);
 
-    //void valArr(std::shared_ptr<T[]> values, std::shared_ptr<size_t[]> number, std::shared_ptr<Node<T>> currNode = nullptr, size_t index = 1) const;
+    //void valArr(std::shared_ptr<T[]> values, std::shared_ptr<size_t[]> number, nodeptr currNode = nullptr, size_t index = 1) const;
 
-    std::string printLevelToFile(std::shared_ptr<Node<T>> currNode, size_t level) const;
+    std::string printLevelToFile(nodeptr currNode, size_t level) const;
 
 public:
 
-    std::shared_ptr<Node<T>> root = nullptr;        // the root of the tree
+    nodeptr root = nullptr;        // the root of the tree
 
     Tree(const T _val);
 
@@ -32,7 +33,7 @@ public:
 
     ~Tree() = default;
 
-    std::shared_ptr<Node<T>> find(const T _val) const;
+    nodeptr find(const T _val) const;
 
     void insert(const T _val);
 
@@ -40,13 +41,13 @@ public:
 
     Tree& operator=(const Tree& _tree);
 
-    std::shared_ptr<Node<T>> max(std::shared_ptr<Node<T>> root = nullptr) const;
+    nodeptr max(nodeptr root = nullptr) const;
 
-    std::shared_ptr<Node<T>> min(std::shared_ptr<Node<T>> root = nullptr) const;
+    nodeptr min(nodeptr root = nullptr) const;
 
     void pop(const T _val);
 
-    size_t height(std::shared_ptr<Node<T>> currNode = nullptr, size_t result = 0) const;
+    size_t height(nodeptr currNode = nullptr, size_t result = 0) const;
 
     void toFile() const;
 
